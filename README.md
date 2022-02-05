@@ -8,4 +8,8 @@
 
 <p align="center">A simple, fast, and efficient service for deploying Javadocs from Jenkins for Spigot.</p>
 
-## Hi
+
+Special thanks to [Fluvio][fluvio-repo] for the GitHub CI. You should check them out 😉 
+
+
+[fluvio-repo]: https://github.com/infinyon/fluvio
