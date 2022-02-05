@@ -1,10 +1,10 @@
+use crate::updater::JenkinsBuildToolsMetaData;
+use hyper::body::Buf;
+use hyper::Client;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
-use hyper::Client;
-use hyper::body::Buf;
-use serde::{Deserialize, Serialize};
-use crate::updater::JenkinsBuildToolsMetaData;
 
 mod constants;
 mod updater;
@@ -23,7 +23,6 @@ async fn check_for_installation() -> Result<(), Box<dyn Error + Send + Sync>> {
     let metadata = std::fs::metadata(constants::get_build_tools_metadata_path());
 
     if metadata.is_ok() {
-
     } else {
         println!("Spigot Build Tools folder not found. Installing now...");
     }
@@ -37,11 +36,13 @@ async fn check_for_installation() -> Result<(), Box<dyn Error + Send + Sync>> {
     Ok(())
 }
 
-
 fn verify_env() {
     let java_version = std::env::var("JAVA_HOME");
     java_version.as_ref().expect("JAVA_HOME not set");
-    println!("Using java executable from '{}'", java_version.as_ref().unwrap());
+    println!(
+        "Using java executable from '{}'",
+        java_version.as_ref().unwrap()
+    );
 }
 
 async fn get_current_version() -> Option<JenkinsBuildToolsMetaData> {

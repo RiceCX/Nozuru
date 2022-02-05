@@ -1,8 +1,8 @@
-use std::error::Error;
-use hyper::Client;
-use hyper::body::Buf;
-use serde::{Deserialize, Serialize};
 use crate::{constants, get_current_version};
+use hyper::body::Buf;
+use hyper::Client;
+use serde::{Deserialize, Serialize};
+use std::error::Error;
 
 pub async fn check_for_update() -> Result<bool, Box<dyn Error + Send + Sync>> {
     let mut needs_update = false;
@@ -32,15 +32,12 @@ pub async fn check_for_update() -> Result<bool, Box<dyn Error + Send + Sync>> {
         println!("Spigot Build Tools metadata not found. Downloading build tools...");
     }
 
-
     Ok(needs_update)
 }
-
 
 pub async fn download_build_tools() -> Result<(), Box<dyn Error + Send + Sync>> {
     Ok(())
 }
-
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct JenkinsBuildToolsMetaData {
