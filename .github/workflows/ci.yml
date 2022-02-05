@@ -1,0 +1,96 @@
+
+name: CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  CARGO_TERM_COLOR: always
+  VERBOSE: ${{ github.events.input.verbose }}
+
+jobs:
+  build:
+    name: Primary build ${{ matrix.binary }} for ${{ matrix.rust-target }} on (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        rust-target:
+          - aarch64-apple-darwin
+          - arm-unknown-linux-gnueabihf
+          - armv7-unknown-linux-gnueabihf
+          - x86_64-apple-darwin
+        rust: [stable]
+        binary: [nozuru]
+        include:
+          - os: ubuntu-latest
+            rust: stable
+            rust-target: arm-unknown-linux-gnueabihf
+            binary: nozuru
+          - os: ubuntu-latest
+            rust: stable
+            rust-target: armv7-unknown-linux-gnueabihf
+            binary: nozuru
+          - os: ubuntu-latest
+            rust: stable
+            rust-target: x86_64-pc-windows-gnu
+            binary: nozuru.exe
+          - os: macos-11
+            rust: stable
+            rust-target: x86_64-apple-darwin
+            binary: nozuru
+          - os: macos-11
+            rust: stable
+            rust-target: x86_64-apple-darwin
+            binary: nozuru-run
+          - os: macos-11
+            rust: stable
+            rust-target: aarch64-apple-darwin
+            binary: nozuru
+          - os: macos-11
+            rust: stable
+            rust-target: aarch64-apple-darwin
+            binary: nozuru-run
+    env:
+      RUST_BACKTRACE: full
+      RUSTV: ${{ matrix.rust }}
+      TARGET: ${{ matrix.rust-target }}
+      RUST_BIN_DIR: target/${{ matrix.rust-target }}/debug
+      RELEASE_NAME: debug
+    steps:
+      - uses: actions/checkout@v2
+      - name: Print env
+        run: |
+          echo "RUST_BIN_DIR = ${{ env.RUST_BIN_DIR }} "
+      - name: Install Rust ${{ matrix.rust }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          key: ${{ matrix.os }}-${{ matrix.rust-target }}-${{ matrix.binary }}
+
+      - name: Build Nozuru
+        if: matrix.binary == 'nozuru'
+        run: make build-cli
+
+      - name: Install mingw gcc
+        if: matrix.rust-target  == 'x86_64-pc-windows-gnu'
+        run: sudo apt-get install gcc-mingw-w64-x86-64
+
+      - name: Build nozuru
+        if: matrix.binary == 'nozuru.exe'
+        run: make build-cli
+
+      # Upload artifacts
+      - name: Upload artifact - ${{ matrix.binary }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.binary }}-${{ matrix.rust-target }}
+          path: ${{ env.RUST_BIN_DIR }}/${{ matrix.binary }}
