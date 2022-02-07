@@ -32,6 +32,7 @@ async fn check_for_installation() -> BoxedResult<()> {
     if metadata.is_ok() {
     } else {
         println!("Spigot Build Tools folder not found. Installing now...");
+        updater::check_and_create_build_folder().await?;
     }
 
     let needs_update = updater::check_for_update().await?;
