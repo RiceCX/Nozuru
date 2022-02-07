@@ -45,7 +45,6 @@ pub async fn check_for_update() -> BoxedResult<bool> {
     Ok(needs_update)
 }
 
-
 pub fn check_and_create_build_folder() {
     let build_folder = constants::get_build_tools_folder();
 

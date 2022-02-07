@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use hyper::{Body, Response};
 
 pub const TITLE: &str = "_____   __
 ___  | / /_______________  ____________  __
@@ -9,6 +10,8 @@ _  /|  / / /_/ /_  /_/ /_/ /_  /   / /_/ /
 pub const AUTHOR: &str = "AndyIsCool5463#5230";
 
 pub type BoxedResult<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
+
+pub type WebResponse = Result<Response<Body>, hyper::Error>;
 
 pub const SPIGOT_BUILD_TOOLS_URL: &str = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar";
 

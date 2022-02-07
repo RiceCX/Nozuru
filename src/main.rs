@@ -9,16 +9,21 @@ use crate::constants::BoxedResult;
 
 mod constants;
 mod updater;
+mod server;
+mod versions;
 
 
 #[tokio::main]
 async fn main() -> BoxedResult<()> {
+    print!("\x1B[2J\x1B[1;1H");
     println!("{}", constants::TITLE);
     println!("\nThank you for using Nozuru, a Rust tool to deploy Spigot jars and deploy Javadocs");
     println!("This tool is still in development, so please report any bugs or issues to {} on Discord, or open an issue on GitHub\n", constants::AUTHOR);
     verify_env();
 
-    check_for_installation().await
+    check_for_installation().await;
+
+    server::start().await
 }
 
 async fn check_for_installation() -> BoxedResult<()> {
