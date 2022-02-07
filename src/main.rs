@@ -5,12 +5,14 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
+use crate::constants::BoxedResult;
 
 mod constants;
 mod updater;
 
+
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn main() -> BoxedResult<()> {
     println!("{}", constants::TITLE);
     println!("\nThank you for using Nozuru, a Rust tool to deploy Spigot jars and deploy Javadocs");
     println!("This tool is still in development, so please report any bugs or issues to {} on Discord, or open an issue on GitHub\n", constants::AUTHOR);
@@ -19,7 +21,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     check_for_installation().await
 }
 
-async fn check_for_installation() -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn check_for_installation() -> BoxedResult<()> {
     let metadata = std::fs::metadata(constants::get_build_tools_metadata_path());
 
     if metadata.is_ok() {
@@ -30,7 +32,8 @@ async fn check_for_installation() -> Result<(), Box<dyn Error + Send + Sync>> {
     let needs_update = updater::check_for_update().await?;
 
     if needs_update {
-        updater::download_build_tools().await?;
+        updater::download_build_tools_metadata(constants::get_build_tools_metadata_path().as_path()).await?;
+        updater::download_build_tools(constants::get_build_tools_path().as_path()).await?;
     }
 
     Ok(())
